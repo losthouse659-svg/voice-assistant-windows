@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.log
+dist/
+build/
+*.spec
+models/vosk-model*/
+venv/
+.env
+logs/*.log
+data/*.db
