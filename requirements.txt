@@ -4,3 +4,4 @@ pyttsx3
 pyautogui
 SpeechRecognition
 pywin32
+customtkinter
