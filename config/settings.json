@@ -1,0 +1,11 @@
+{
+    "wake_word": "asistente",
+    "assistant_name": "Jarvis",
+    "language": "cs",
+    "vosk_model_path": "models/vosk-model-small-cs-0.4-rhasspy",
+    "tts_rate": 160,
+    "tts_volume": 1.0,
+    "tts_voice_index": 0,
+    "confirm_dangerous_actions": true,
+    "history_max_entries": 500
+}
