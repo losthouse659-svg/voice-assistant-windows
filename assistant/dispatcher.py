@@ -75,45 +75,51 @@ def process_command(text: str) -> bool:
             save_interaction(text, "open_url", response, None)
             return True
 
-        # Aplikace
+        # === APLIKACE - VSE CESKY ===
         if "kalkulacka" in text or "kalkulator" in text:
             apps.open_calculator()
             speak("Oteviram kalkulacku.")
             save_interaction(text, "calc", "Oteviram kalkulacku.", None)
             return True
-        if "notepad" in text or "poznamkovy blok" in text:
+            
+        if "poznamkovy blok" in text or "notepad" in text or "blok" in text:
             apps.open_notepad()
             speak("Oteviram poznamkovy blok.")
             save_interaction(text, "notepad", "Oteviram poznamkovy blok.", None)
             return True
-        if "pruzkumnik" in text or "explorer" in text:
+            
+        if "pruzkumnik" in text or "soubory" in text:
             apps.open_explorer()
             speak("Oteviram pruzkumnik souboru.")
             save_interaction(text, "explorer", "Oteviram pruzkumnik.", None)
             return True
-        if "spravce uloh" in text:
+            
+        if "spravce uloh" in text or "task manager" in text:
             apps.open_task_manager()
             speak("Oteviram spravce uloh.")
             save_interaction(text, "taskmgr", "Oteviram spravce uloh.", None)
             return True
 
-        # Weby
-        if "youtube" in text:
+        # === WEBY - VSE CESKY ===
+        if "jutjub" in text or "youtube" in text:
             web.open_youtube()
             speak("Oteviram YouTube.")
             save_interaction(text, "youtube", "Oteviram YouTube.", None)
             return True
-        if "google" in text:
+            
+        if "gugl" in text or "google" in text:
             web.open_google()
             speak("Oteviram Google.")
             save_interaction(text, "google", "Oteviram Google.", None)
             return True
-        if "github" in text:
+            
+        if "githab" in text or "github" in text:
             web.open_github()
             speak("Oteviram GitHub.")
             save_interaction(text, "github", "Oteviram GitHub.", None)
             return True
-        if "wikipedia" in text:
+            
+        if "wikiped" in text or "vikipedie" in text:
             web.open_wikipedia()
             speak("Oteviram Wikipedii.")
             save_interaction(text, "wikipedia", "Oteviram Wikipedii.", None)
