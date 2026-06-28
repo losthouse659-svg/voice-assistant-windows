@@ -7,133 +7,120 @@ from data_manager import save_interaction
 logger = logging.getLogger(__name__)
 
 def process_command(text: str) -> bool:
-    """Zpracuje prikaz. Vraci False pokud ma asistent skoncit."""
+    """Zpracuje příkaz. Vrací False pokud má asistent skončit."""
     if not text:
-        speak("Nerozumel jsem, zkus to znovu.")
-        save_interaction(text, "nerozumel", "Nerozumel jsem.", None)
+        speak("Nerozuměl jsem, zkus to znovu.")
+        save_interaction(text, "nerozuměl", "Nerozuměl jsem.", None)
         return True
-
+    
     response = ""
     error = None
-
+    
     try:
-        # Ukonceni
-        if any(k in text for k in ["konec", "vypni se", "skonci", "ukoncit"]):
-            speak("Dobra, vypinam se. Na shledanou.")
-            save_interaction(text, "vypnuti", "Vypinam se.", None)
+        # Ukončení
+        if any(k in text for k in ["konec", "vypni se", "skonči", "ukončit"]):
+            speak("Dobrá, vypínám se. Na shledanou.")
+            save_interaction(text, "vypnutí", "Vypínám se.", None)
             return False
-
-        # Pamet: zapamatuj si
+        
+        # Paměť: zapamatuj si
         if "zapamatuj si" in text or "pamatuj si" in text:
-            fact = text.replace("zapamatuj si", "").replace("pamatuj si", "").replace("ze", "").strip()
+            fact = text.replace("zapamatuj si", "").replace("pamatuj si", "").replace("že", "").strip()
             remember_fact(fact)
             response = f"Zapamatuji si: {fact}"
             speak(response)
             save_interaction(text, "remember", response, None)
             return True
-
-        # Pamet: zapomen
-        if "zapomen" in text:
-            fact = text.replace("zapomen", "").strip()
+        
+        # Paměť: zapomeň
+        if "zapomeň" in text:
+            fact = text.replace("zapomeň", "").strip()
             forget_fact(fact)
-            response = f"Smazal jsem z pameti: {fact}"
+            response = f"Smazal jsem z paměti: {fact}"
             speak(response)
             save_interaction(text, "forget", response, None)
             return True
-
-        # Pamet: co o mne vis
-        if "co o mne vis" in text or "ukaz pamet" in text:
+        
+        # Paměť: co o mně víš
+        if "co o mně víš" in text or "ukaž paměť" in text:
             memory = show_all_memory()
-            response = "Vim o tobe: " + "; ".join(memory) if memory else "Zatim o tobe nic nevim."
+            response = "Vím o tobě: " + "; ".join(memory) if memory else "Zatím o tobě nic nevím."
             speak(response)
             save_interaction(text, "show_memory", response, None)
             return True
-
+        
         # Jak se jmenuji
         if "jak se jmenuji" in text:
             name = get_user_name()
-            response = f"Jmenujes se {name}." if name else "Neznam tvoje jmeno."
+            response = f"Jmenuješ se {name}." if name else "Neznám tvoje jméno."
             speak(response)
             save_interaction(text, "get_name", response, None)
             return True
-
+        
         # Napsat text
-        if text.startswith("napis "):
+        if text.startswith("napiš "):
             to_type = text[6:].strip()
             keyboard.type_text(to_type)
-            response = f"Napsal jsem: {to_type}"
+            response = f"Píšu: {to_type}"
             speak(response)
-            save_interaction(text, "type_text", response, None)
+            save_interaction(text, "type", response, None)
             return True
-
-        # Otevrit web
-        if "otevri web" in text or "otevri stranku" in text:
-            url = text.replace("otevri web", "").replace("otevri stranku", "").strip()
-            web.open_url(url)
-            response = f"Oteviram: {url}"
+        
+        # Otevřít aplikaci
+        if "otevři" in text or "spusť" in text or "spusti" in text:
+            app_name = text.replace("otevři", "").replace("spusť", "").replace("spusti", "").strip()
+            success = apps.open_app(app_name)
+            if success:
+                response = f"Otevírám {app_name}"
+                speak(response)
+                save_interaction(text, "open_app", response, None)
+                return True
+            else:
+                response = f"Nepodařilo se otevřít {app_name}"
+                speak(response)
+                save_interaction(text, "open_app_failed", response, None)
+                return True
+        
+        # Otevřít webovou stránku
+        if "web" in text or "stránku" in text or "stranku" in text:
+            url = text.replace("otevři", "").replace("web", "").replace("stránku", "").replace("stranku", "").strip()
+            web.open_website(url)
+            response = f"Otevírám web: {url}"
             speak(response)
-            save_interaction(text, "open_url", response, None)
+            save_interaction(text, "open_web", response, None)
             return True
-
-        # === APLIKACE - VSE CESKY ===
-        if "kalkulacka" in text or "kalkulator" in text:
+        
+        # Kalkulačka
+        if "kalkulačka" in text or "kalkulacka" in text:
             apps.open_calculator()
-            speak("Oteviram kalkulacku.")
-            save_interaction(text, "calc", "Oteviram kalkulacku.", None)
+            response = "Otevírám kalkulačku"
+            speak(response)
+            save_interaction(text, "calculator", response, None)
             return True
-            
-        if "poznamkovy blok" in text or "notepad" in text or "blok" in text:
+        
+        # Poznámkový blok
+        if "poznámkový blok" in text or "poznamkovy blok" in text or "notepad" in text:
             apps.open_notepad()
-            speak("Oteviram poznamkovy blok.")
-            save_interaction(text, "notepad", "Oteviram poznamkovy blok.", None)
+            response = "Otevírám poznámkový blok"
+            speak(response)
+            save_interaction(text, "notepad", response, None)
             return True
-            
-        if "pruzkumnik" in text or "soubory" in text:
+        
+        # Průzkumník
+        if "průzkumník" in text or "pruzkumnik" in text or "explorer" in text or "složky" in text or "slozky" in text:
             apps.open_explorer()
-            speak("Oteviram pruzkumnik souboru.")
-            save_interaction(text, "explorer", "Oteviram pruzkumnik.", None)
+            response = "Otevírám průzkumníka"
+            speak(response)
+            save_interaction(text, "explorer", response, None)
             return True
-            
-        if "spravce uloh" in text or "task manager" in text:
-            apps.open_task_manager()
-            speak("Oteviram spravce uloh.")
-            save_interaction(text, "taskmgr", "Oteviram spravce uloh.", None)
-            return True
-
-        # === WEBY - VSE CESKY ===
-        if "jutjub" in text or "youtube" in text:
-            web.open_youtube()
-            speak("Oteviram YouTube.")
-            save_interaction(text, "youtube", "Oteviram YouTube.", None)
-            return True
-            
-        if "gugl" in text or "google" in text:
-            web.open_google()
-            speak("Oteviram Google.")
-            save_interaction(text, "google", "Oteviram Google.", None)
-            return True
-            
-        if "githab" in text or "github" in text:
-            web.open_github()
-            speak("Oteviram GitHub.")
-            save_interaction(text, "github", "Oteviram GitHub.", None)
-            return True
-            
-        if "wikiped" in text or "vikipedie" in text:
-            web.open_wikipedia()
-            speak("Oteviram Wikipedii.")
-            save_interaction(text, "wikipedia", "Oteviram Wikipedii.", None)
-            return True
-
-        # Neznamy prikaz
-        response = f"Prikaz '{text}' neznam."
-        speak(response)
-        save_interaction(text, "unknown", response, None)
-
+        
+        # Příkaz nebyl rozpoznán
+        speak("Nerozuměl jsem tvému příkazu. Zkus to jinak.")
+        save_interaction(text, "unknown", "Nerozpoznaný příkaz.", None)
+        return True
+        
     except Exception as e:
-        error = str(e)
-        speak("Nastala chyba, zkontroluj log.")
-        logger.error(f"Chyba pri zpracovani prikazu '{text}': {e}")
-        save_interaction(text, "error", f"Chyba: {error}", error)
-
-    return True
+        logger.error(f"Chyba při zpracování příkazu: {e}")
+        speak("Nastala chyba při zpracování příkazu.")
+        save_interaction(text, "error", str(e), str(e))
+        return True
