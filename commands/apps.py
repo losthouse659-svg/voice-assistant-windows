@@ -37,3 +37,35 @@ def open_paint():
 
 def open_cmd():
     _run("cmd")
+
+def gaming_mode():
+    """Spustí herí ní mód - Discord, Steam a CS2."""
+    logger.info("Spouštím herí ní mód...")
+    
+    # Spusť Discord
+    try:
+        _run("discord")
+        logger.info("Discord spuštěn")
+    except Exception as e:
+        logger.error(f"Chyba při spuštění Discord: {e}")
+    
+    # Spusť Steam
+    try:
+        _run("steam")
+        logger.info("Steam spuštěn")
+    except Exception as e:
+        logger.error(f"Chyba při spuštění Steam: {e}")
+    
+    # Spusť CS2 (Counter-Strike 2)
+    try:
+        # CS2 se spouští přes Steam URL
+        subprocess.Popen(["start", "steam://rungameid/730"], shell=True)
+        logger.info("CS2 spuštěno")
+    except Exception as e:
+        logger.error(f"Chyba při spuštění CS2: {e}")
+    
+    return True
+
+def open_app(app_name: str):
+    """Univerzální funkce pro otevření aplikace."""
+    return _run(app_name)
