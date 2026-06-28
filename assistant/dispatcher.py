@@ -66,8 +66,23 @@ def process_command(text: str) -> bool:
             save_interaction(text, "type", response, None)
             return True
         
-        # Otevřít aplikaci
-        if "otevři" in text or "spusť" in text or "spusti" in text:
+        # Herní mód
+        if "herní mód" in text or "herní" in text and "mód" in text or "gaming mode" in text:
+            apps.gaming_mode()
+            response = "Spouštím herní mód - Discord, Steam a CS2"
+            speak(response)
+            save_interaction(text, "gaming_mode", response, None)
+            return True
+        
+        # Comet prohlížeč
+        if "comet" in text:
+            web.open_comet()
+            response = "Otevírám Comet prohlížeč"
+            speak(response)
+            save_interaction(text, "open_comet", response, None)
+            return True
+        
+        # Otevřít aplikaci        if "otevři" in text or "spusť" in text or "spusti" in text:
             app_name = text.replace("otevři", "").replace("spusť", "").replace("spusti", "").strip()
             success = apps.open_app(app_name)
             if success:
