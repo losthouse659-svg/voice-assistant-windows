@@ -1,0 +1,6 @@
+vosk
+sounddevice
+pyttsx3
+pyautogui
+SpeechRecognition
+pywin32
