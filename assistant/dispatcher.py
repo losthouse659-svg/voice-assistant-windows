@@ -6,6 +6,8 @@ from data_manager import save_interaction
 
 logger = logging.getLogger(__name__)
 
+# Globální stav pro pause/resume
+listening_paused = False
 def process_command(text: str) -> bool:
     """Zpracuje příkaz. Vrací False pokud má asistent skončit."""
     if not text:
@@ -17,7 +19,27 @@ def process_command(text: str) -> bool:
     error = None
     
     try:
-        # Ukončení
+        global listening_paused
+        
+        # Pokud je poslouchání pozastaveno, kontroluj jen příkazy na probuzení
+        if listening_paused:
+            if any(k in text for k in ["probuď se", "probuď", "zapni poslouchání", "zapni", "začni poslouchat"]):
+                listening_paused = False
+                speak("Poslouchám znovu.")
+                save_interaction(text, "resume_listening", "Poslouchání obnoveno.", None)
+                return True
+            else:
+                # Ignoruj všechny ostatní příkazy když je paused
+                return True
+        
+        # Pause listening
+        if any(k in text for k in ["ztlum se", "přestaň poslouchat", "vypni poslouchání", "vypni se na chvíli", "pausa"]):
+            listening_paused = True
+            speak("Ztišuji se. Řekni 'probuď se' pro pokračování.")
+            save_interaction(text, "pause_listening", "Poslouchání pozastaveno.", None)
+            return True
+        
+        # Ukončení        # Ukončení
         if any(k in text for k in ["konec", "vypni se", "skonči", "ukončit"]):
             speak("Dobrá, vypínám se. Na shledanou.")
             save_interaction(text, "vypnutí", "Vypínám se.", None)
