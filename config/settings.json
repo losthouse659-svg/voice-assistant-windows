@@ -1,5 +1,5 @@
 {
-    "wake_word": "asistente",
+    "wake_word": "start",
     "assistant_name": "Jarvis",
     "language": "cs",
     "vosk_model_path": "models/vosk-model-small-cs-0.4-rhasspy",
