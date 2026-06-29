@@ -225,29 +225,22 @@ konec / vypni se / skonci         -> Vypne asistenta
         try:
             load_model()
             self.log("[SYSTEM] Model nahran.")
-            self.set_status("Aktivni - Ceka na wake word", "#00ff00")
+            self.set_status("Continuous Listening - Posloucham prikazy", "#00ff00")
+            speak("Posloucham. Rekni 'ztlum se' pro pauzu nebo 'konec' pro ukonceni.")
+            self.log("[SYSTEM] Continuous listening aktivni - zadny wake word potreba.")
             
             while self.running:
-                self.log("[LISTENING] Cekam na 'asistente'...")
+                command = listen_command()
+                self.log(f"[USER] Prikaz: '{command}'")
                 
-                if wait_for_wake_word():
-                    self.set_status("Posloucham prikaz...", "#00aaff")
-                    self.log("[WAKE] Wake word detekovan!")
+                if command:
+                    continue_running = process_command(command)
+                    self.log(f"[ASSISTANT] Zpracovano: '{command}'")
                     
-                    command = listen_command()
-                    self.log(f"[USER] Prikaz: '{command}'")
-                    
-                    if command:
-                        continue_running = process_command(command)
-                        self.log(f"[ASSISTANT] Zpracovano: '{command}'")
-                        
-                        if not continue_running:
-                            self.running = False
-                            self.root.after(0, self.stop_assistant)
-                            break
-                    
-                    self.set_status("Aktivni - Ceka na wake word", "#00ff00")
-                    
+                    if not continue_running:
+                        self.running = False
+                        self.root.after(0, self.stop_assistant)
+                        break                    
         except FileNotFoundError as e:
             self.log(f"[ERROR] {e}")
             self.log("[ERROR] Spust install_model.bat")
